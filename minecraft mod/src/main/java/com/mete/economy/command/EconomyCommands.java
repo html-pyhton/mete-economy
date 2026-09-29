@@ -86,7 +86,7 @@ public class EconomyCommands {
                         StringArgumentType.getString(ctx, "enchant"),
                         IntegerArgumentType.getInteger(ctx, "level"))))));
 
-        // /al <item> [adet] - oyuncu mağazadan satın alır
+        // /al <item> [adet]
         dispatcher.register(Commands.literal("al")
             .then(Commands.argument("item", StringArgumentType.string())
                 .executes(ctx -> buyItem(ctx, StringArgumentType.getString(ctx, "item"), 1))
@@ -95,13 +95,13 @@ public class EconomyCommands {
                         StringArgumentType.getString(ctx, "item"),
                         IntegerArgumentType.getInteger(ctx, "adet"))))));
 
-        // /sat [adet] - elindeki eşyayı satar
+        // /sat [adet]
         dispatcher.register(Commands.literal("sat")
             .executes(ctx -> sellItem(ctx, -1))
             .then(Commands.argument("adet", IntegerArgumentType.integer(1, 64))
                 .executes(ctx -> sellItem(ctx, IntegerArgumentType.getInteger(ctx, "adet")))));
 
-        // /fiyat [item] - fiyat sorgula
+        // /fiyat [item]
         dispatcher.register(Commands.literal("fiyat")
             .executes(ctx -> showPriceHeld(ctx))
             .then(Commands.argument("item", StringArgumentType.string())
@@ -185,7 +185,7 @@ public class EconomyCommands {
             return 0;
         }
 
-        Item item = BuiltInRegistries.ITEM.get(id);
+        Item item = BuiltInRegistries.ITEM.getValue(id);
         long total = unitPrice * amount;
         if (!state.removeBalance(player.getUUID(), total)) {
             player.sendSystemMessage(Component.literal("§cYeterli paran yok! Gerekli: §e" + total + " TL §7(Bakiyen: §e" + state.getBalance(player.getUUID()) + " TL§7)"));
@@ -229,7 +229,7 @@ public class EconomyCommands {
         String idStr = itemId.toString();
         long unitPrice = state.getSellPrice(idStr);
         if (unitPrice <= 0) {
-            player.sendSystemMessage(Component.literal("§cBu eşya magazaya satılamıyor!"));
+            player.sendSystemMessage(Component.literal("§cBu eşya mağazaya satılamıyor!"));
             return 0;
         }
 
@@ -241,7 +241,7 @@ public class EconomyCommands {
 
         player.sendSystemMessage(Component.literal(
             "§a§lMete Economy §7» §f" + sellCount + "x " + idStr.replace("minecraft:", "") +
-            " sattin (§e" + total + " TL§f). Bakiye: §e" + state.getBalance(player.getUUID()) + " TL"));
+            " sattın (§e" + total + " TL§f). Bakiye: §e" + state.getBalance(player.getUUID()) + " TL"));
         return 1;
     }
 
