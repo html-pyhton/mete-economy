@@ -8,6 +8,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.LongArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -28,7 +29,6 @@ public class EconomyCommands {
     }
 
     private static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher) {
-        // /para
         dispatcher.register(Commands.literal("para")
             .executes(ctx -> showBalance(ctx, ctx.getSource().getPlayerOrException()))
             .then(Commands.literal("ver")
@@ -65,7 +65,6 @@ public class EconomyCommands {
                             EntityArgument.getPlayer(ctx, "player"),
                             LongArgumentType.getLong(ctx, "miktar")))))));
 
-        // /ekonomimenu
         dispatcher.register(Commands.literal("ekonomimenu")
             .requires(src -> {
                     var pl = src.getPlayer();
@@ -78,7 +77,6 @@ public class EconomyCommands {
                 return 1;
             }));
 
-        // /buyenchant
         dispatcher.register(Commands.literal("buyenchant")
             .then(Commands.argument("enchant", StringArgumentType.string())
                 .then(Commands.argument("level", IntegerArgumentType.integer(1))
@@ -86,7 +84,6 @@ public class EconomyCommands {
                         StringArgumentType.getString(ctx, "enchant"),
                         IntegerArgumentType.getInteger(ctx, "level"))))));
 
-        // /al <item> [adet]
         dispatcher.register(Commands.literal("al")
             .then(Commands.argument("item", StringArgumentType.string())
                 .executes(ctx -> buyItem(ctx, StringArgumentType.getString(ctx, "item"), 1))
@@ -95,13 +92,11 @@ public class EconomyCommands {
                         StringArgumentType.getString(ctx, "item"),
                         IntegerArgumentType.getInteger(ctx, "adet"))))));
 
-        // /sat [adet]
         dispatcher.register(Commands.literal("sat")
             .executes(ctx -> sellItem(ctx, -1))
             .then(Commands.argument("adet", IntegerArgumentType.integer(1, 64))
                 .executes(ctx -> sellItem(ctx, IntegerArgumentType.getInteger(ctx, "adet")))));
 
-        // /fiyat [item]
         dispatcher.register(Commands.literal("fiyat")
             .executes(ctx -> showPriceHeld(ctx))
             .then(Commands.argument("item", StringArgumentType.string())
@@ -161,7 +156,7 @@ public class EconomyCommands {
         return 1;
     }
 
-    private static int buyItem(CommandContext<CommandSourceStack> ctx, String itemKey, int amount) {
+    private static int buyItem(CommandContext<CommandSourceStack> ctx, String itemKey, int amount) throws CommandSyntaxException {
         ServerPlayer player = ctx.getSource().getPlayerOrException();
         MinecraftServer s = server();
         if (s == null) return 0;
@@ -203,7 +198,7 @@ public class EconomyCommands {
         return 1;
     }
 
-    private static int sellItem(CommandContext<CommandSourceStack> ctx, int amount) {
+    private static int sellItem(CommandContext<CommandSourceStack> ctx, int amount) throws CommandSyntaxException {
         ServerPlayer player = ctx.getSource().getPlayerOrException();
         MinecraftServer s = server();
         if (s == null) return 0;
@@ -245,7 +240,7 @@ public class EconomyCommands {
         return 1;
     }
 
-    private static int showPriceHeld(CommandContext<CommandSourceStack> ctx) {
+    private static int showPriceHeld(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         ServerPlayer player = ctx.getSource().getPlayerOrException();
         ItemStack held = player.getMainHandItem();
         if (held.isEmpty()) {
@@ -257,7 +252,7 @@ public class EconomyCommands {
         return showPrice(ctx, itemId.toString());
     }
 
-    private static int showPrice(CommandContext<CommandSourceStack> ctx, String itemKey) {
+    private static int showPrice(CommandContext<CommandSourceStack> ctx, String itemKey) throws CommandSyntaxException {
         ServerPlayer player = ctx.getSource().getPlayerOrException();
         MinecraftServer s = server();
         if (s == null) return 0;
@@ -273,7 +268,7 @@ public class EconomyCommands {
         return 1;
     }
 
-    private static int buyEnchant(CommandContext<CommandSourceStack> ctx, String enchantKey, int level) {
+    private static int buyEnchant(CommandContext<CommandSourceStack> ctx, String enchantKey, int level) throws CommandSyntaxException {
         ServerPlayer player = ctx.getSource().getPlayerOrException();
         MinecraftServer s = server();
         if (s == null) return 0;
