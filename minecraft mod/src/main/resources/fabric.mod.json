@@ -1,0 +1,28 @@
+{
+	"schemaVersion": 1,
+	"id": "mete-economy",
+	"version": "${version}",
+	"name": "Mete Economy",
+	"description": "Economy system with TL currency, custom enchant levels and OP management GUI for Minecraft 1.21.11",
+	"authors": [
+		"Mete"
+	],
+	"contact": {},
+	"license": "MIT",
+	"icon": "assets/mete-economy/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.mete.economy.MeteEconomy"
+		],
+		"client": [
+			"com.mete.economy.client.MeteEconomyClient"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~1.21.11",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}
